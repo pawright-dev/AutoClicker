@@ -1,10 +1,11 @@
-﻿<Window x:Class="AutoClicker.Views.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:commands="clr-namespace:AutoClicker.Commands"
         xmlns:enums="clr-namespace:AutoClicker.Enums"
+        xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="av" x:Class="AutoClicker.Views.MainWindow"
         ResizeMode="CanMinimize"
-        Height="320" Width="450">
+        Height="400" Width="450">
     <Window.Resources>
         <ResourceDictionary Source="../Resources/MainWindowResources.xaml"/>
     </Window.Resources>
@@ -26,6 +27,8 @@
                         Executed="AboutCommand_Execute"/>
         <CommandBinding Command="commands:MainWindowCommands.CaptureMouseScreenCoordinates"
                         Executed="CaptureMouseScreenCoordinatesCommand_Execute"/>
+        <CommandBinding Command="commands:MainWindowCommands.CaptureMouseScreenCoordinates2"
+                Executed="CaptureMouseScreenCoordinates2Command_Execute"/>
     </Window.CommandBindings>
 
     <Grid Name="mainWindowGrid">
@@ -81,16 +84,16 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBox Grid.Column="0" Width="45"
-                             Text="{Binding AutoClickerSettings.Hours, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                             Text="{Binding AutoClickerSettings.Hours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Grid.Column="1" Margin="5, 0, 5, 5" Text="hours"/>
                     <TextBox Grid.Column="2" Width="45"
-                             Text="{Binding AutoClickerSettings.Minutes, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                             Text="{Binding AutoClickerSettings.Minutes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Grid.Column="3" Margin="5, 0, 5, 5" Text="minutes"/>
                     <TextBox Grid.Column="4" Width="45"
-                             Text="{Binding AutoClickerSettings.Seconds, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                             Text="{Binding AutoClickerSettings.Seconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Grid.Column="5" Margin="5, 0, 5, 5" Text="seconds"/>
                     <TextBox Grid.Column="6" Width="45"
-                             Text="{Binding AutoClickerSettings.Milliseconds, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                             Text="{Binding AutoClickerSettings.Milliseconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <TextBlock Grid.Column="7" Margin="5, 0, 5, 5" Text="milliseconds"/>
                 </Grid>
             </GroupBox>
@@ -110,18 +113,12 @@
 
                     <RadioButton Grid.Row="0" Grid.Column="0" Margin="0, 0, 0, 5"
                                  Content="Infinite (Until stopped)"
-                                 IsChecked="{Binding AutoClickerSettings.SelectedRepeatMode,
-                                                     Converter={StaticResource EnumToBooleanConverter},
-                                                     ConverterParameter={x:Static enums:RepeatMode.Infinite}}"/>
+                                 IsChecked="{Binding AutoClickerSettings.SelectedRepeatMode, ConverterParameter={x:Static enums:RepeatMode.Infinite}, Converter={StaticResource EnumToBooleanConverter}}"/>
                     <RadioButton Grid.Row="1" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"
-                                 IsChecked="{Binding AutoClickerSettings.SelectedRepeatMode,
-                                                     Converter={StaticResource EnumToBooleanConverter},
-                                                     ConverterParameter={x:Static enums:RepeatMode.Count}}">
+                                 IsChecked="{Binding AutoClickerSettings.SelectedRepeatMode, ConverterParameter={x:Static enums:RepeatMode.Count}, Converter={StaticResource EnumToBooleanConverter}}">
                         <StackPanel Orientation="Horizontal">
                             <TextBox Width="50" Margin="5, 0, 0, 0"
-                                     Text="{Binding AutoClickerSettings.SelectedTimesToRepeat,
-                                                    UpdateSourceTrigger=PropertyChanged,
-                                                    Mode=TwoWay}"/>
+                                     Text="{Binding AutoClickerSettings.SelectedTimesToRepeat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                             <TextBlock Text="Times" Margin="5, 0, 0, 0" />
                         </StackPanel>
                     </RadioButton>
@@ -173,10 +170,33 @@
                     </RadioButton>
                 </Grid>
             </GroupBox>
-
-            <GroupBox Name="clickOptionGroupBox"
-                      Header="Click Options" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
-                <UniformGrid Name="clickOptionInnerGrid"
+            <GroupBox Name="clickPositionGroupBox2"
+          Header="Click Position" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2">
+                <CheckBox
+        x:Name="RadioButtonSelectedLocationMode_PickedLocation2"
+        Grid.Row="2" Grid.ColumnSpan="2" Margin="0, 0, 0, 5"
+        IsChecked="{Binding AutoClickerSettings.SelectedLocationMode, ConverterParameter={x:Static enums:LocationMode.PickedLocation}, Converter={StaticResource EnumToBooleanConverter}}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="X" Margin="5, 0, 0, 0"/>
+                        <TextBox Width="50" Margin="5, 0, 0, 5"
+                x:Name="TextBoxPickedXValue2"
+                Text="{Binding AutoClickerSettings.PickedXValue2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Text="Y" Margin="5, 0, 0, 0"/>
+                        <TextBox Width="50" Margin="5, 0, 0, 5"
+               x:Name="TextBoxPickedYValue2"
+Text="{Binding AutoClickerSettings.PickedYValue2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button x:Name="CaptureMouseScreenCoordinatesButton2"
+               Margin="5, 0, 0, 0" Width="20" Height="20"
+               ToolTip="Use the mouse to capture coordinates on the screen where you want to click."
+               Command="commands:MainWindowCommands.CaptureMouseScreenCoordinates2">
+                            <Image Source="../Resources/Icons/location-crosshairs-solid.ico"/>
+                        </Button>
+                    </StackPanel>
+                </CheckBox>
+            </GroupBox>
+            <GroupBox x:Name="clickOptionGroupBox"
+                      Header="Click Options" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" Margin="0,5,0,55" Grid.RowSpan="2">
+                <UniformGrid x:Name="clickOptionInnerGrid"
                              HorizontalAlignment="Center" VerticalAlignment="Stretch" Rows="1" Columns="4">
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Mouse Button"
                                Margin="5, 5, 5, 5" VerticalAlignment="Center" TextAlignment="Center"/>
@@ -191,24 +211,24 @@
                 </UniformGrid>
             </GroupBox>
 
-            <UniformGrid Name="buttonsGrid"
-                         Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Rows="2" Columns="3">
-                <Button Name="startButton"
+            <UniformGrid x:Name="buttonsGrid"
+                         Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Rows="2" Columns="3" Margin="0,38,0,-38">
+                <Button x:Name="startButton"
                         Grid.Row="0" Grid.Column="0" Margin="5"
                         Content="Start (F6)" Command="commands:MainWindowCommands.Start"/>
-                <Button Name="stopButton"
+                <Button x:Name="stopButton"
                         Grid.Row="0" Grid.Column="1" Margin="5"
                         Content="Stop (F7)" Command="commands:MainWindowCommands.Stop"/>
-                <Button Name="toggleButton"
+                <Button x:Name="toggleButton"
                         Grid.Row="0" Grid.Column="1" Margin="5"
                         Content="Toggle (F8)" Command="commands:MainWindowCommands.Toggle"/>
-                <Button Name="saveSettingsButton"
+                <Button x:Name="saveSettingsButton"
                         Grid.Row="1" Grid.Column="0" Margin="5"
                         Content="Save Settings" Command="commands:MainWindowCommands.SaveSettings"/>
-                <Button Name="hotkeysButton"
+                <Button x:Name="hotkeysButton"
                         Grid.Row="1" Grid.Column="1" Margin="5"
                         Content="Hotkeys" Command="commands:MainWindowCommands.HotkeySettings"/>
-                <CheckBox Name="topMostCheckBox"
+                <CheckBox x:Name="topMostCheckBox"
                           Grid.Row="1" Grid.Column="1" Margin="5"
                           VerticalAlignment="Center" HorizontalAlignment="Center"
                           Content="Top most window"

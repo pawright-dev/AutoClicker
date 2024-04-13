@@ -1,4 +1,6 @@
-﻿namespace AutoClicker.Utils
+﻿using System;
+
+namespace AutoClicker.Utils
 {
     public static class Constants
     {
@@ -38,5 +40,10 @@
         public const int DEFAULT_START_HOTKEY = 0x75;
         public const int DEFAULT_STOP_HOTKEY = 0x76;
         public const int DEFAULT_TOGGLE_HOTKEY = 0x77;
+
+        public const UInt32 WM_KEYDOWN = 0x0100;
+        public const int KEY_1 = 0x31;
+        public const int KEY_E = 0x45;
+        public const int KEY_C = 0x43;
     }
 }

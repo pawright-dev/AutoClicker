@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
@@ -219,6 +222,26 @@ namespace AutoClicker.Views
             captureMouseCoordinatesWindow.Show();
         }
 
+        private void CaptureMouseScreenCoordinates2Command_Execute(
+            object sender,
+            ExecutedRoutedEventArgs e
+        )
+        {
+            if (captureMouseCoordinatesWindow == null)
+            {
+                captureMouseCoordinatesWindow = new CaptureMouseScreenCoordinatesWindow();
+                captureMouseCoordinatesWindow.Closed += (o, args) => captureMouseCoordinatesWindow = null;
+                captureMouseCoordinatesWindow.OnCoordinatesCaptured += (o, point) =>
+                {
+                    TextBoxPickedXValue2.Text = point.X.ToString();
+                    TextBoxPickedYValue2.Text = point.Y.ToString();
+                    RadioButtonSelectedLocationMode_PickedLocation.IsChecked = true;
+                };
+            }
+
+            captureMouseCoordinatesWindow.Show();
+        }
+
         #endregion Commands
 
         #region Helper Methods
@@ -252,6 +275,12 @@ namespace AutoClicker.Views
                 MouseCursor.Position : new Point(AutoClickerSettings.PickedXValue, AutoClickerSettings.PickedYValue);
         }
 
+        private Point GetSelectedPosition2()
+        {
+            return AutoClickerSettings.SelectedLocationMode == LocationMode.CurrentLocation ?
+                MouseCursor.Position : new Point(AutoClickerSettings.PickedXValue2, AutoClickerSettings.PickedYValue2);
+        }
+
         private int GetSelectedXPosition()
         {
             return GetSelectedPosition().X;
@@ -260,6 +289,16 @@ namespace AutoClicker.Views
         private int GetSelectedYPosition()
         {
             return GetSelectedPosition().Y;
+        }
+
+        private int GetSelectedXPosition2()
+        {
+            return GetSelectedPosition2().X;
+        }
+
+        private int GetSelectedYPosition2()
+        {
+            return GetSelectedPosition2().Y;
         }
 
         private int GetNumberOfMouseActions()
@@ -337,12 +376,29 @@ namespace AutoClicker.Views
 
         private void InitMouseClick()
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.Invoke(async () =>
             {
                 switch (AutoClickerSettings.SelectedMouseButton)
                 {
                     case MouseButton.Left:
+                        var delay = 100;
+                        //_ = User32ApiUtils.GetCursorPosition(out var point);
                         PerformMouseClick(Constants.MOUSEEVENTF_LEFTDOWN, Constants.MOUSEEVENTF_LEFTUP, GetSelectedXPosition(), GetSelectedYPosition());
+                        await Task.Delay(delay);
+                        PerformMouseClick(Constants.MOUSEEVENTF_LEFTDOWN, Constants.MOUSEEVENTF_LEFTUP, GetSelectedXPosition(), GetSelectedYPosition());
+                        await Task.Delay(delay);
+                        PerformMouseClick(Constants.MOUSEEVENTF_LEFTDOWN, Constants.MOUSEEVENTF_LEFTUP, GetSelectedXPosition2(), GetSelectedYPosition2());
+                        await Task.Delay(delay);
+                        PerformMouseClick(Constants.MOUSEEVENTF_LEFTDOWN, Constants.MOUSEEVENTF_LEFTUP, GetSelectedXPosition2(), GetSelectedYPosition2());
+                        //await Task.Delay(delay);
+                        //await PerformKeyClick(Constants.KEY_E);
+                        //await Task.Delay(delay);
+                        //await PerformKeyClick(Constants.KEY_E);
+                        //await Task.Delay(delay);
+                        //await PerformKeyClick(Constants.KEY_C);
+                        //await Task.Delay(delay);
+                        //await PerformKeyClick(Constants.KEY_1);
+                        //User32ApiUtils.SetCursorPosition(point.X, point.Y);
                         break;
                     case MouseButton.Right:
                         PerformMouseClick(Constants.MOUSEEVENTF_RIGHTDOWN, Constants.MOUSEEVENTF_RIGHTUP, GetSelectedXPosition(), GetSelectedYPosition());
@@ -365,6 +421,24 @@ namespace AutoClicker.Views
                 }
 
                 User32ApiUtils.ExecuteMouseEvent(mouseDownAction | mouseUpAction, xPos, yPos, 0, 0);
+            }
+        }
+
+        private async Task PerformKeyClick(int key)
+        {
+            var processes = Process.GetProcesses().Where(x => x.MainWindowTitle.Contains("Roblox"));
+            foreach (var process in processes)
+            {
+                User32ApiUtils.SetForegroundWindow(process.MainWindowHandle);
+                await Task.Delay(500);
+                User32ApiUtils.SendMessage(process.MainWindowHandle, Constants.WM_KEYDOWN, new IntPtr(key), new IntPtr(0));
+                await Task.Delay(500);
+                User32ApiUtils.PostMessage(process.MainWindowHandle, Constants.WM_KEYDOWN, new IntPtr(key), new IntPtr(0));
+                await Task.Delay(500);
+                User32ApiUtils.SendMessage(process.MainWindowHandle, Constants.WM_KEYDOWN, new IntPtr(key), new IntPtr(0));
+                await Task.Delay(500);
+                User32ApiUtils.PostMessage(process.MainWindowHandle, Constants.WM_KEYDOWN, new IntPtr(key), new IntPtr(0));
+                await Task.Delay(500);
             }
         }
 

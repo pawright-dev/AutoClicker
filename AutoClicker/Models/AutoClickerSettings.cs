@@ -24,6 +24,10 @@ namespace AutoClicker.Models
 
         public int PickedYValue { get; set; }
 
+        public int PickedXValue2 { get; set; }
+
+        public int PickedYValue2 { get; set; }
+
         public int SelectedTimesToRepeat { get; set; }
     }
 }
